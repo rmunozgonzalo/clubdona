@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Usuario;
+use App\Entity\Contacto\Cliente;
+use App\Entity\Admin\Cupon;
 
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -143,10 +145,14 @@ class DashboardController extends AbstractDashboardController
         return [
 
             MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
+            MenuItem::section('Contacto'),
+            MenuItem::linkToCrud('Clientes', 'fa fa-customer', Cliente::class),
             MenuItem::section('Administración',''),
             MenuItem::subMenu('Lista de Valores ', 'fa fa-gears')->setSubItems([
                 MenuItem::section('Equipo de Trabajo'),
                 MenuItem::linkToCrud('Gestión de Usuarios ', '', Usuario::class),
+                MenuItem::section('Mantenedores'),
+                MenuItem::linkToCrud('Gestión de Cupones ', '', Cupon::class),
             ]),
         ];
     }

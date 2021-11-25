@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Admin\Cupon;
 use App\Repository\UsuarioRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Validator as AppValidator;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -98,11 +101,17 @@ class Usuario implements UserInterface
      */
     public $email;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Cupon::class, mappedBy="registradoPor")
+     */
+    private $cupons;
+
     public function __construct()
     {
         $this->rol = self::ROLE_USER;
         $this->fechaCreacion  = new \DateTime();
         $this->username = " ";
+        $this->cupons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,5 +225,40 @@ class Usuario implements UserInterface
         $this->fechaCreacion = $fechaCreacion;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Cupon[]
+     */
+    public function getCupons(): Collection
+    {
+        return $this->cupons;
+    }
+
+    public function addCupon(Cupon $cupon): self
+    {
+        if (!$this->cupons->contains($cupon)) {
+            $this->cupons[] = $cupon;
+            $cupon->setRegistradoPor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCupon(Cupon $cupon): self
+    {
+        if ($this->cupons->removeElement($cupon)) {
+            // set the owning side to null (unless already changed)
+            if ($cupon->getRegistradoPor() === $this) {
+                $cupon->setRegistradoPor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getUsername();
     }
 }
