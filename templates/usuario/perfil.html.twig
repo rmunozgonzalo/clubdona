@@ -1,0 +1,29 @@
+{% extends '@!EasyAdmin/page/content.html.twig' %}
+
+
+{% block page_title %}
+	Mi Perfil
+{% endblock %}
+
+{% block page_content %}
+	<dl class="datalist">
+		<div class="data-row with-background field-text">
+			<dd>
+				Nombre Completo
+			</dd>
+			<dt>
+				{{ app.user.username }}
+			</dt>
+		</div>
+		<div class="data-row field-text">
+		</div>
+		<div class="data-row with-background field-select">
+			<dd>
+				Rol
+			</dd>
+			<dt>
+				Administrador
+			</dt>
+		</div>
+	</dl>
+{% endblock %}

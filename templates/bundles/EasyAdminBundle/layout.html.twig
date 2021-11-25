@@ -1,0 +1,236 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% trans_default_domain ea.i18n.translationDomain %}
+
+<!DOCTYPE html>
+<html lang="{{ ea.i18n.htmlLocale }}" dir="{{ ea.i18n.textDirection }}">
+<head>
+    {% block head_metas %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noodp, noimageindex, notranslate, nocache" />
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    {% endblock head_metas %}
+
+    <title>{% block page_title %}{{ block('content_title')|striptags|raw }}{% endblock %}</title>
+
+    {% block head_stylesheets %}
+        <!-- link rel="stylesheet" href="{{ asset('bundles/easyadmin/app.css') }}" -->
+        <!-- Simple bar CSS -->
+        <link rel="stylesheet" href="{{asset('css/simplebar.css')}}">
+        <!-- Fonts CSS -->
+        <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100;0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <!-- Icons CSS -->
+        <link rel="stylesheet" href="{{asset('css/fa.css')}}">
+         {# <link rel="stylesheet" href="{{asset('css/feather.css')}}"> #}
+        <!-- Date Range Picker CSS -->
+        <link rel="stylesheet" href="{{asset('css/daterangepicker.css')}}">
+        <!-- App CSS -->
+        <link rel="stylesheet" href="{{asset('css/app-light.css')}}" id="lightTheme">
+        <link rel="stylesheet" href="{{asset('css/app-dark.css')}}" id="darkTheme" disabled>
+    {% endblock %}
+
+    {% block configured_stylesheets %}
+        {% for css_asset in ea.assets.cssFiles ?? [] %}
+            <link rel="stylesheet" href="{{ asset(css_asset) }}">
+        {% endfor %}
+    {% endblock %}
+
+    {% block head_favicon %}
+        <link rel="shortcut icon" href="{{ asset(ea.dashboardFaviconPath) }}">
+    {% endblock %}
+
+    {% block head_javascript %}
+        <!--
+        <script src="{{ asset('bundles/easyadmin/app.js') }}"></script>
+        -->
+    {% endblock head_javascript %}
+
+    {% if 'rtl' == ea.i18n.textDirection %}
+        <!--
+        <link rel="stylesheet" href="{{ asset('bundles/easyadmin/app.rtl.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/easyadmin/app-custom-rtl.css') }}">
+        -->
+    {% endif %}
+
+    {% block configured_head_contents %}
+        {% for htmlContent in ea.assets.headContents ?? [] %}
+            {{ htmlContent|raw }}
+        {% endfor %}
+    {% endblock %}
+</head>
+
+{% block body %}
+    <body id="{% block body_id %}{% endblock %}" class="vertical light {% block body_class %}{% endblock %}">
+    {% block wrapper_wrapper %}
+        {% block flash_messages %}
+            {{ include(ea.templatePath('flash_messages')) }}
+        {% endblock flash_messages %}
+        <div class="wrapper">
+            <nav class="topnav navbar navbar-light">
+              <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
+                <i class="fa fa-bars navbar-toggler-icon"></i>
+              </button>
+              <ul class="nav">
+                <li class="nav-item">
+                  <a class="nav-link text-muted my-2" href="#" id="modeSwitcher" data-mode="light">
+                    <i class="fa fa-sun fa-16"></i>
+                  </a>
+                </li>
+                <li class="nav-item nav-notif">
+                  <a class="nav-link text-muted my-2" href="./#" data-toggle="modal" data-target=".modal-notif">
+                    <span class="fa fa-bell fa-16"></span>
+                    <span class="dot dot-md bg-success"></span>
+                  </a>
+                </li>
+                {% block header %}
+                    <div class="content-top navbar-custom-menu">
+                        {% block header_custom_menu %}
+                            {% if constant('Symfony\\Component\\Security\\Core\\Authorization\\Voter\\AuthenticatedVoter::IS_IMPERSONATOR') is defined %}
+                                {% set impersonator_permission = 'IS_IMPERSONATOR' %}
+                            {% else %}
+                                {% set impersonator_permission = 'ROLE_PREVIOUS_ADMIN' %}
+                            {% endif %}
+                            <li class="nav-item dropdown">
+                              <a class="my-2 nav-link text-muted pr-0" href="#menu-user" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-user fa-fw fa-16"></i>
+                              </a>
+                              <div id="menu-user" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                {% for item in ea.userMenu.items %}
+                                    {% if item.isMenuSection %}
+                                        <hr class="m-0" />
+                                    {% else %}
+                                        <a href="{{ item.linkUrl }}" class="dropdown-item {{ item.cssClass }}" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}" referrerpolicy="origin-when-cross-origin">
+                                            {% if item.icon is not empty %}<i class="fa fa-fw {{ item.icon }}"></i>{% endif %}
+                                            <span>{{ item.label }}</span>
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                              </div>
+                            </li>
+                        {% endblock header_custom_menu %}
+                    </div>
+                {% endblock header %}
+              </ul>
+            </nav>
+            <aside class="sidebar-left border-right bg-white shadow" id="leftSidebar" data-simplebar>
+              <a href="#" class="btn collapseSidebar toggle-btn d-lg-none text-muted ml-2 mt-3" data-toggle="toggle">
+                <i class="fa fa-x"><span class="sr-only"></span></i>
+              </a>
+              <nav class="vertnav navbar navbar-light">
+                {% block main_menu_wrapper %}
+                    {{ include(ea.templatePath('main_menu')) }}
+                {% endblock main_menu_wrapper %}
+              </nav>
+            </aside>
+            {% block wrapper %}
+                <div class="content-wrapper">
+                    <div id="sidebar-resizer-handler" class="resizer-handler resizer-handler-left"></div>
+
+                    {% block content %}
+                        <div class="content">
+                            <main role="main" class="main-content">
+                              <div class="container-fluid">
+                                <div class="row justify-content-center">
+                                  <div class="col-12">
+                                    {% block content_header_wrapper %}
+                                      {% set has_help_message = (ea.crud.helpMessage ?? '') is not empty %}
+                                      <section class="content-header">
+                                          {% block content_header %}
+                                              <div class="d-flex flex-row justify-content-between align-content-center w-100">
+                                                  <div class="content-header-title">
+                                                      <h2 class="page-title">
+                                                          {% block content_title %}{% endblock %}                                                          
+                                                      </h2>
+                                                      {% block content_help %}
+                                                          {% if has_help_message %}
+                                                            <p class="card-text">
+                                                              {{ ea.crud.helpMessage }}
+                                                            </p>
+                                                          {% endif %}
+                                                      {% endblock %}
+                                                  </div>
+
+                                                  {% block page_actions_wrapper %}
+                                                      <div class="page-actions">{% block page_actions %}{% endblock %}</div>
+                                                  {% endblock %}
+                                              </div>
+                                          {% endblock content_header %}
+                                      </section>
+                                    {% endblock content_header_wrapper %}
+                                    {% block main %}
+                                      <div class="content-panel">
+                                        <div class="content-panel-body without-header {{ not has_page_footer ? 'without-footer' }}">
+                                            {% block page_content %}{% endblock %}
+                                        </div>
+
+                                        {% if has_page_footer %}
+                                            <section class="content-panel-footer without-padding">
+                                                {{ block('page_footer') }}
+                                            </section>
+                                        {% endif %}
+                                    </div>
+                                    {% endblock %}
+                                  </div>
+                                </div> <!-- .row -->
+                              </div> <!-- .container-fluid -->
+                            </main>
+
+                            {% block content_footer_wrapper %}
+                                {% set content_footer = block('content_footer') is defined ? block('content_footer') : '' %}
+                                {% if content_footer is not empty %}
+                                    <section class="content-footer">
+                                        {{ content_footer }}
+                                    </section>
+                                {% endif %}
+                            {% endblock %}
+                        </div>
+                    {% endblock content %}
+
+                    <div id="content-resizer-handler" class="resizer-handler resizer-handler-right"></div>
+                </div>
+            {% endblock wrapper %}
+        </div>
+    {% endblock wrapper_wrapper %}
+
+    {% block body_javascript %}
+    <script src="{{ asset('js/jquery.min.js')}}"></script>
+    <script src="{{ asset('js/popper.min.js')}}"></script>
+    <script src="{{ asset('js/moment.min.js')}}"></script>
+    <script src="{{ asset('js/bootstrap.min.js')}}"></script>
+    <script src="{{ asset('js/simplebar.min.js')}}"></script>
+    <script src="{{ asset('js/daterangepicker.js')}}"></script>
+    <script src="{{ asset('js/jquery.stickOnScroll.js')}}"></script>
+    <script src="{{ asset('js/tinycolor-min.js')}}"></script>
+    <script src="{{ asset('js/config.js')}}"></script>
+    <script src="{{ asset('js/d3.min.js')}}"></script>
+    <script src="{{ asset('js/topojson.min.js')}}"></script>
+    <script src="{{ asset('js/datamaps.all.min.js')}}"></script>
+    <script src="{{ asset('js/datamaps-zoomto.js')}}"></script>
+    <script src="{{ asset('js/datamaps.custom.js')}}"></script>
+    <script src="{{ asset('js/Chart.min.js')}}"></script>
+    <script>
+      /* defind global options */
+      Chart.defaults.global.defaultFontFamily = base.defaultFontFamily;
+      Chart.defaults.global.defaultFontColor = colors.mutedColor;
+    </script>
+    <script src="{{ asset('js/gauge.min.js')}}"></script>
+    <script src="{{ asset('js/jquery.sparkline.min.js')}}"></script>
+    <script src="{{ asset('js/apexcharts.min.js')}}"></script>
+    <script src="{{ asset('js/apexcharts.custom.js')}}"></script>
+    <script src="{{ asset('js/apps.js')}}"></script>
+    {% endblock body_javascript %}
+
+    {% block configured_javascripts %}
+        {% for js_asset in ea.assets.jsFiles ?? [] %}
+            <script src="{{ asset(js_asset) }}"></script>
+        {% endfor %}
+    {% endblock %}
+
+    {% block configured_body_contents %}
+        {% for htmlContent in ea.assets.bodyContents ?? [] %}
+            {{ htmlContent|raw }}
+        {% endfor %}
+    {% endblock %}
+    </body>
+{% endblock body %}
+</html>

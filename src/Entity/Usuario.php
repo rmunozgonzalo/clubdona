@@ -2,34 +2,70 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UsuarioRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Validator as AppValidator;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UsuarioRepository::class)
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
+ * @AppValidator\Usuario()
+ * @ApiResource(
+ *     collectionOperations={
+ *         "get"={
+ *             "normalization_context"={
+ *                 "groups"={
+ *                      "usuario:list"
+ *                  }
+ *             }
+ *         }
+ *     },
+ *     itemOperations={
+ *          "get"={
+ *              "normalization_context"={
+ *                  "groups"={
+ *                      "usuario:item"
+ *                   }
+ *               }
+ *          }
+ *     },
+ *     order={
+ *         "fechaCreacion"="DESC"
+ *     },
+ *     paginationEnabled=false
+ * )
  */
-class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
+class Usuario implements UserInterface
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_USER = 'ROLE_USER';
+
+    const ROLES = [
+        'Administrador' => self::ROLE_ADMIN,
+        'Usuario' => self::ROLE_USER,
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"usuario:list", "usuario:item"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=180, unique=false)
+     * @Groups({"usuario:list", "usuario:item"})
      */
-    private $email;
+    private $username;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string")
      */
-    private $roles = [];
+    private $rol;
 
     /**
      * @var string The hashed password
@@ -38,40 +74,50 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @var string|null
+     *
+     * @ORM\Column(name="fecha_actualizacion", type="datetime", nullable=true, options={})
      */
-    private $isVerified = false;
+    private $fechaActualizacion = null;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_creacion", type="datetime", nullable=false)
+     * @Groups({"usuario:list", "usuario:item"})
+     */
+    private $fechaCreacion;
+
+    /**
+     * @var string
+     */
+    public $plainPassword;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    public function __construct()
+    {
+        $this->rol = self::ROLE_USER;
+        $this->fechaCreacion  = new \DateTime();
+        $this->username = " ";
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @deprecated since Symfony 5.3, use getUserIdentifier instead
-     */
-    public function getUsername(): string
+    public function GETfULLnAME(): string
     {
-        return (string) $this->email;
-    }
-
-    public function setUsername(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
+      return $this->username;
     }
 
     public function getEmail(): string
     {
-        return (string) $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
+      return $this->username;
     }
 
     /**
@@ -79,9 +125,17 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @see UserInterface
      */
-    public function getUserIdentifier(): string
+    public function getUsername(): string
     {
-        return (string) $this->email;
+
+        return $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
     }
 
     /**
@@ -89,26 +143,27 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return array_unique([self::ROLE_USER, $this->rol]);
     }
 
-    public function setRoles(array $roles): self
+   public function getRol(): string
+   {
+       return $this->rol ? $this->rol : self::ROLE_USER;
+   }
+
+    public function setRol(string $rol)
     {
-        $this->roles = $roles;
+        $this->rol = $rol;
 
         return $this;
     }
 
     /**
-     * @see PasswordAuthenticatedUserInterface
+     * @see UserInterface
      */
     public function getPassword(): string
     {
-        return $this->password;
+        return (string) $this->password;
     }
 
     public function setPassword(string $password): self
@@ -138,14 +193,27 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function isVerified(): bool
+
+    public function getFechaActualizacion(): ?\DateTimeInterface
     {
-        return $this->isVerified;
+        return $this->fechaActualizacion;
     }
 
-    public function setIsVerified(bool $isVerified): self
+    public function setFechaActualizacion(?\DateTimeInterface $fechaActualizacion): self
     {
-        $this->isVerified = $isVerified;
+        $this->fechaActualizacion = $fechaActualizacion;
+
+        return $this;
+    }
+
+    public function getFechaCreacion(): ?\DateTimeInterface
+    {
+        return $this->fechaCreacion;
+    }
+
+    public function setFechaCreacion(\DateTimeInterface $fechaCreacion): self
+    {
+        $this->fechaCreacion = $fechaCreacion;
 
         return $this;
     }

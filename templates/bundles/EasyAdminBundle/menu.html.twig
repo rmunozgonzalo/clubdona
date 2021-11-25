@@ -1,0 +1,72 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% macro render_menu_item(item) %}
+    {% if item.isMenuSection %}
+        <span class="pl-1 {{ item.cssClass }}">{{ item.label }}</span>
+    {% elseif item.hasSubItems %}
+        <a href="#ui-{{item.index}}" class="dropdown-toggle nav-link collapsed {{ item.cssClass }}" data-toggle="collapse" aria-expanded="false">
+            {% if item.icon is not empty %}<i class="fa-fw {{ item.icon|default('fa-home') }} fa-12"></i>{% endif %}
+            <span class="ml-1 item-text">{{ item.label|raw }}</span>
+        </a>
+    {% else %}
+        <a href="{{ item.linkUrl }}" class="nav-link {{ item.cssClass }}" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}" referrerpolicy="origin-when-cross-origin">
+            {% if item.icon is not empty %}<i class="fa-fw {{ item.icon|default('fa-home') }} fa-12"></i>{% endif %}
+            <span class="pl-1 item-text">{{ item.label|raw }}</span>
+        </a>
+    {% endif %}
+{% endmacro %}
+
+
+
+{% block main_menu_before %}
+    {% block header_navbar %}
+        <div id="header-logo" class="w-100 text-center my-3">
+            {% block header_logo %}
+                <img class="img-fluid" src="{{ asset('assets/header-blank.png') }}" alt="">
+            {% endblock header_logo %}
+        </div>
+    {% endblock header_navbar %}
+{% endblock %}
+
+
+{% block main_menu %}
+    {% set openSection = false %}
+    {% for menuItem in ea.mainMenu.items %}
+        {% block menu_item %}
+            {% if menuItem.isMenuSection %}
+              {% if openSection %}
+                </ul>
+              {% endif %}
+              <p class="text-muted nav-heading mt-4 mb-1">
+                {% if menuItem.icon is not empty %}<i class="menu-icon fa fe-fw {{ menuItem.icon }}"></i>{% endif %}
+                <span class="{{ menuItem.cssClass }}">{{ menuItem.label }}</span>
+              </p>
+              <ul class="navbar-nav flex-fill w-100 mb-2">
+              {% set openSection = true %}
+            {% else %}
+              {% if not openSection %}
+                <ul class="navbar-nav flex-fill w-100 mb-2">
+              {% endif %}
+              <li class="nav-item {{ menuItem.isMenuSection ? 'header' }} {{ menuItem.hasSubItems ? 'dropdown' : 'w-100' }}{#{ ea.mainMenu.isSelected(menuItem) ? 'active' }#} {#{ ea.mainMenu.isExpanded(menuItem) ? 'active submenu-active' }#}">
+                  {{ _self.render_menu_item(menuItem) }}
+
+                  {% if menuItem.hasSubItems %}
+                      <ul id="ui-{{menuItem.index}}" class="list-unstyled pl-2 w-100 collapse">
+                          {% for menuSubItem in menuItem.subItems %}
+                              {% block menu_subitem %}
+                                  <li class="nav-item">
+                                      {{ _self.render_menu_item(menuSubItem) }}
+                                  </li>
+                              {% endblock menu_subitem %}
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+              </li>
+            {% endif %}
+        {% endblock menu_item %}
+    {% endfor %}
+    {% if openSection %}
+      </ul>
+    {% endif %}
+{% endblock main_menu %}
+
+{% block main_menu_after %}{% endblock %}

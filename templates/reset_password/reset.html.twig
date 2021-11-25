@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Restablecer contraseña{% endblock %}
+
+{% block body %}
+<div class="cls-content-sm panel">
+    <div class="panel-body">
+    {% for flashError in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+        <div class="mar-ver pad-btm">
+            <h1 class="h3">Restablecer contraseña</h1>
+        </div>
+        {{ form_start(resetForm) }}
+            {{ form_row(resetForm.plainPassword) }}
+            <br>
+            <div>
+                <button class="btn btn-primary btn-lg btn-block"> Enviar</button>
+            </div>
+        {{ form_end(resetForm) }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Restablecer contraseña{% endblock %}
+
+{% block body %}
+<div class="cls-content-sm panel">
+    <div class="panel-body">
+    {% for flashError in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+        <div class="mar-ver pad-btm">
+            <h1 class="h3">Solicitud completada</h1>
+        </div>
+        <p>
+            Un correo ha sido enviado con el link al que puedes acceder para restablecer tu contraseña.
+            Este link expira en 1 hora.
+        </p>
+        <p>Si no has recibido el correo revisa la carpeta de spam o <a class="text-primary" href="{{ path('app_forgot_password_request') }}">intentalo nuevamente</a>.</p>
+    </div>
+</div>
+{% endblock %}

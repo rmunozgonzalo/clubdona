@@ -1,0 +1,21 @@
+# backend base para proyectos con easyadmin
+
+## instalar dependencias usando composer
+
+composer install
+
+## configurar archivo .env con el acceso a la bd y luego ejecutar 
+
+bin/console doctrine:schema:create
+
+sudo sh comandos.sh (no es necesario durante el setup)
+
+
+## Agrega usuario admin
+
+bin/console app:setup:admin
+
+por defecto crea un usuario con los siguientes datos: 
+username: admin
+password: admin
+rol: ROLE_ADMIN 
