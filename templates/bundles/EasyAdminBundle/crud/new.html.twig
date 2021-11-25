@@ -17,14 +17,14 @@
 
 {% block configured_stylesheets %}
     {{ parent() }}
-    {% for css_asset in new_form.vars.ea_crud_form.assets.cssFiles %}
+    {% for css_asset in new_form.vars.ea_crud_form.assets.cssAssets %}
         <link rel="stylesheet" href="{{ asset(css_asset) }}">
     {% endfor %}
 {% endblock %}
 
 {% block configured_javascripts %}
     {{ parent() }}
-    {% for js_asset in new_form.vars.ea_crud_form.assets.jsFiles %}
+    {% for js_asset in new_form.vars.ea_crud_form.assets.jsAssets %}
         <script src="{{ asset(js_asset) }}"></script>
     {% endfor %}
 {% endblock %}
