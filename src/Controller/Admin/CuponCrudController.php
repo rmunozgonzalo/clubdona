@@ -26,7 +26,7 @@ class CuponCrudController extends AbstractCrudController
     {
         $cupon = new Cupon();
         $cupon->setRegistradoPor($this->getUser());
-
+        $cupon->setIsActive(true);
         return $cupon;
     }
 
@@ -34,14 +34,14 @@ class CuponCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
             TextField::new('nombre'),
             TextField::new('codigo'),
-            DateTimeField::new('fechaRegistro'),
+            DateTimeField::new('fechaRegistro')->setFormTypeOption('disabled','disabled'),
             DateTimeField::new('fechaVencimiento'),
-            BooleanField::new('estado'),
+            TextField::new('estado'),
+            BooleanField::new('isActive'),
             TextField::new('token'),
-            AssociationField::new('registradoPor'),
+            AssociationField::new('registradoPor')->hideOnForm(),
         ];
     }
     

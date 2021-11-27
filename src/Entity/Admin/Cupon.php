@@ -36,7 +36,7 @@ class Cupon
     private $fechaRegistro;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $fechaVencimiento;
 
@@ -60,6 +60,11 @@ class Cupon
      * @ORM\JoinColumn(nullable=false)
      */
     private $registradoPor;
+
+    public function __construct()
+    {
+        $this->fechaRegistro  = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -107,11 +112,13 @@ class Cupon
         return $this->fechaVencimiento;
     }
 
-    public function setFechaVencimiento(\DateTimeInterface $fechaVencimiento): self
+    public function setFechaVencimiento(?\DateTimeInterface $fechaVencimiento): self
     {
-        $this->fechaVencimiento = $fechaVencimiento;
+        if($fechaVencimiento){
+            $this->fechaVencimiento = $fechaVencimiento;    
+        }
+        return $this;    
 
-        return $this;
     }
 
     public function getEstado(): ?string
