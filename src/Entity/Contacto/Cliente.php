@@ -65,7 +65,8 @@ class Cliente
     private $direccion;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Admin\Comuna")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $comuna;
 
@@ -187,12 +188,12 @@ class Cliente
         return $this;
     }
 
-    public function getComuna(): ?string
+    public function getComuna(): ?Comuna
     {
         return $this->comuna;
     }
 
-    public function setComuna(string $comuna): self
+    public function setComuna(Comuna $comuna): self
     {
         $this->comuna = $comuna;
 

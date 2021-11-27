@@ -114,9 +114,7 @@ class Cupon
 
     public function setFechaVencimiento(?\DateTimeInterface $fechaVencimiento): self
     {
-        if($fechaVencimiento){
-            $this->fechaVencimiento = $fechaVencimiento;    
-        }
+        $this->fechaVencimiento = $fechaVencimiento;    
         return $this;    
 
     }
