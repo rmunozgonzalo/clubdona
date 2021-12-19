@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Fields\ComunaClienteField;
 
 class ClienteCrudController extends AbstractCrudController
 {
@@ -51,8 +52,12 @@ class ClienteCrudController extends AbstractCrudController
             TextField::new('instagram'),
             TextField::new('direccion'),
             TextField::new('puntos'),
-            AssociationField::new('comuna')//->setCrudController(Comuna::class),
+            AssociationField::new('comuna', 'Comuna')
+            //AssociationField::new('comuna')->setCrudController(\App\Controller\Admin\ComunaCrudController::class),
             //AssociationField::new('comuna')->autocomplete(),
+            //ComunaClienteField::new('comuna', 'Comuna')
+            //->setFormTypeOptions([
+            //]),
         ];
     }
 }

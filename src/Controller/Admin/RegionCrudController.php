@@ -14,11 +14,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
-class ComunaCrudController extends AbstractCrudController
+class RegionCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Comuna::class;
+        return Region::class;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -40,9 +40,10 @@ class ComunaCrudController extends AbstractCrudController
         return [
             IntegerField::new('id'),
             TextField::new('nombre'),
-            AssociationField::new('region'),
+            AssociationField::new('pais'),
         ];
     }
     
 }
+
 

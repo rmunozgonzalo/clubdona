@@ -3,6 +3,7 @@
 namespace App\Entity\Contacto;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Admin\Comuna;
 use App\Repository\Contacto\ClienteRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -188,18 +189,6 @@ class Cliente
         return $this;
     }
 
-    public function getComuna(): ?Comuna
-    {
-        return $this->comuna;
-    }
-
-    public function setComuna(Comuna $comuna): self
-    {
-        $this->comuna = $comuna;
-
-        return $this;
-    }
-
     public function getPuntos(): ?string
     {
         return $this->puntos;
@@ -210,5 +199,22 @@ class Cliente
         $this->puntos = $puntos;
 
         return $this;
+    }
+
+    public function getComuna(): ?Comuna
+    {
+        return $this->comuna;
+    }
+
+    public function setComuna(?Comuna $comuna): self
+    {
+        $this->comuna = $comuna;
+
+        return $this;
+    }
+
+    public function getNombreCompleto(): ?string
+    {
+        return $this->nombre.' '.$this->apellidos;
     }
 }

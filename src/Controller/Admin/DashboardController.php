@@ -5,6 +5,10 @@ namespace App\Controller\Admin;
 use App\Entity\Usuario;
 use App\Entity\Contacto\Cliente;
 use App\Entity\Admin\Cupon;
+use App\Entity\Admin\Comuna;
+use App\Entity\Admin\Region;
+use App\Entity\Admin\Pais;
+use App\Entity\Admin\ParametroConfiguracion;
 
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -19,8 +23,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
-
 
 
 class DashboardController extends AbstractDashboardController
@@ -152,7 +154,11 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::section('Equipo de Trabajo'),
                 MenuItem::linkToCrud('Gestión de Usuarios ', '', Usuario::class),
                 MenuItem::section('Mantenedores'),
-                MenuItem::linkToCrud('Gestión de Cupones ', '', Cupon::class),
+                MenuItem::linkToCrud('Cupones ', '', Cupon::class),
+                MenuItem::linkToCrud('Comunas ', '', Comuna::class),
+                MenuItem::linkToCrud('Regiones ', '', Region::class),
+                MenuItem::linkToCrud('Pais ', '', Pais::class),
+                MenuItem::linkToCrud('Parametro de Configuración', '', ParametroConfiguracion::class),
             ]),
         ];
     }
