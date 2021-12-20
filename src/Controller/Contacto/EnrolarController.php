@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\ParametroConfiguracion;
+use App\Entity\Admin\ParametroConfiguracion;
 use App\Entity\Contacto\Cliente;
 use App\Entity\Admin\Comuna;
 use App\Entity\Admin\Region;
@@ -28,13 +28,20 @@ class EnrolarController extends AbstractController
     public function index(Request $request): Response
     {
         $cliente = $this->getDoctrine()->getRepository(Cliente::class)->findAll();
-        $valor = $this->getDoctrine()->getRepository(ParametroConfiguracion::class)->findBy(['parametro' => 'VALOR'])[0]->getValor();
+        $valor = $this->getDoctrine()->getRepository(ParametroConfiguracion::class)->findOneBy(['parametro' => 'VALOR']);
+        if($valor){
+            $valor = $valor->getValor();
+        }
+        else{
+            $valor = 0;
+        }
+        
 
         $productosConIngredientes = [];
 
         $entityManager = $this->getDoctrine()->getManager();
 
-            return $this->render('/enrolar/index.html.twig', [
+            return $this->render('/formulario_enrolar/form.html.twig', [
                 'cliente' => $cliente,
                 'VALOR' => $valor,
         ]);
