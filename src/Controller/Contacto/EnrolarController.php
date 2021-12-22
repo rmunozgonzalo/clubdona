@@ -27,7 +27,7 @@ class EnrolarController extends AbstractController
      */
     public function index(Request $request): Response
     {
-        $cliente = $this->getDoctrine()->getRepository(Cliente::class)->findAll();
+        //$cliente = $this->getDoctrine()->getRepository(Cliente::class)->findAll();
         $valor = $this->getDoctrine()->getRepository(ParametroConfiguracion::class)->findOneBy(['parametro' => 'VALOR']);
         if($valor){
             $valor = $valor->getValor();
@@ -42,7 +42,7 @@ class EnrolarController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
 
             return $this->render('/formulario_enrolar/form.html.twig', [
-                'cliente' => $cliente,
+                //'cliente' => $cliente,
                 'VALOR' => $valor,
         ]);
     }
@@ -83,95 +83,39 @@ class EnrolarController extends AbstractController
     function enrolarCliente(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $valid = false;
+        $first_name = $request->request->get('first_name');
+        $last_name = $request->request->get('last_name');
+        $birthday = $request->request->get('birthday');
+        $email = $request->request->get('email');
+        $phone = $request->request->get('phone');
+        $facebook = $request->request->get('facebook');
+        $instagram = $request->request->get('instagram');
 
-        $data = new \App\Data\PedidoCajaData();
-        $form = $this->createForm(PedidoCajaType::class, $data);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entity = Pedido::fromPedidoCaja($form->getData());
+        if ($valid) {
             
 
-            if (!$entity->requierePreparacion()) {
-                $entity->setEstado(Pedido::ESTADO_ARMADO);
-            }
+            //$em->persist($entity->getCliente());
+            //$em->persist($entity);
 
-            $em->persist($entity->getCliente());
-            $em->persist($entity);
-
-            $em->flush();
+            //$em->flush();
 
             return new JsonResponse([
                 'status' => true,
                 'data' => $entity->toArray(),
-                'message' => 'El pedido fue registrado.',
+                'message' => 'El registro fue exitoso.',
             ]);
         }
 
         return new JsonResponse([
             'status' => false,
-            'message' => 'Ocurrio un error al intentar guardar el pedido.',
-            'errors' => array_map(function($e) { return $e->getMessage(); }, iterator_to_array($form->getErrors())),
+            'message' => 'Ocurrio un error al intentar realizr el registro.',
+            'errors' => 'Error de validacion',
         ]);
     }
 
-    /**
-     * @Route("/getDireccion", name="getDireccion")
-     */
-    public function getDireccion(Request $request){
-        $idDireccion = $request->get('idDireccion');
-        $direccion = $this->getDoctrine()->getRepository(ClienteDireccion::class)->find($idDireccion);
-        if($direccion == null){
-            $data = array('direccion' => false);
-            return new JsonResponse($data);
 
-        }else{
-            $sector = $direccion->getSector();
-            $adicional = $direccion->getAdicional();
-            $data = array('sectorNombre' => $sector->getNombre(), 'sectorId' => $sector->getId(),'direccion' => $direccion,'referencia' => $adicional);
-            return new JsonResponse($data);
-        }
-    }
-
-    /**
-     * @Route("/getCliente", name="getCliente")
-     */
-    public function getCliente(Request $request){
-        $idCliente = $request->get('idCliente');
-        $cliente = $this->getDoctrine()->getRepository(Cliente::class)->find($idCliente);
-        if($cliente){
-            $direcciones = $cliente->getDirecciones();
-            $listaDirecciones = [];
-            foreach ($direcciones as $direccion) {
-                $listaDirecciones[] = array(
-                    'id' => $direccion->getId(),
-                    'direccion' => $direccion->getDireccion(),
-                    'sector' => $direccion->getSector()->getNombre()
-                );
-            }
-            $sectores = $this->getDoctrine()->getRepository(Sector::class)->findAll();
-            $listaSectores = [];
-            foreach ($sectores as $sector){
-                $listaSectores [] = array(
-                    'id' => $sector->getId(),
-                    'nombre' => $sector->getNombre()
-                );
-            }
-            $data = array('idCliente' => $cliente->getId(),'nombreCliente' => $cliente->getNombreCompleto(), 'telefonoCliente' => $cliente->getTelefono(),'puntaje' => $cliente->getPuntuacionEmpleados(),'direcciones' => $listaDirecciones,'sectores' => $listaSectores );
-            return new JsonResponse($data);
-        }
-        else{
-            $data = array('idCliente' => null);
-            return new JsonResponse($data);
-
-        }
-    }
-
-    /**
-     * @Route("/clientes", name="clientes")
-     */
-    public function getClientes(Request $request){
+    public function getClientes(){
         $clientes = $this->getDoctrine()->getRepository(Cliente::class)->findAll();
         $arrayClientes = [];
         foreach ($clientes as $cliente) {
@@ -185,19 +129,4 @@ class EnrolarController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route("/formaulario/html", name="caja_promocion_html")
-     */
-    function getSeccionPromocionContent(Request $request){
-        $promocion = $this->getDoctrine()->getRepository(Promocion::class)->find($request->query->get('id'));
-        
-        $html = $this->render('caja/sections/seccion_promocion.html.twig', [
-            'promocion' => $promocion
-        ])->getContent();
-
-        return new JsonResponse([
-            'status' => true,
-            'data' => $html,
-        ]);
-    }
 }

@@ -453,7 +453,7 @@
             <div class="card card-4">
                <div class="card-body">
                   <h2 class="title">Formulario de Registro</h2>
-                  <form method="POST">
+                  <form method="POST" id="enrolarForm" name="enrolarForm" autocomplete="off">
                      <div class="row row-space">
                         <div class="col-2">
                            <div class="input-group">
@@ -473,8 +473,7 @@
                            <div class="input-group">
                               <label class="label">Cumpleaños</label>
                               <div class="input-group-icon">
-                                 <input class="input--style-4 js-datepicker" type="text" name="birthday">
-                                 <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+                                 <input class="input--style-4" type="date" name="birthday">
                               </div>
                            </div>
                         </div>
@@ -493,6 +492,20 @@
                            </div>
                         </div>
                      </div>
+                     <div class="row row-space">
+                        <div class="col-2">
+                           <div class="input-group">
+                              <label class="label">Facebook</label>
+                              <input class="input--style-4" type="text" name="facebook" id="facebook" title="Debe ser @usuariofacebook">
+                           </div>
+                        </div>
+                        <div class="col-2">
+                           <div class="input-group">
+                              <label class="label">Instagram</label>
+                              <input class="input--style-4" type="text" name="instagram">
+                           </div>
+                        </div>
+                     </div>
                      <div class="input-group">
                         <label class="label">Subject</label>
                         <div class="rs-select2 js-select-simple select--no-search">
@@ -506,7 +519,7 @@
                         </div>
                      </div>
                      <div class="p-t-15">
-                        <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
+                        <button class="btn btn--radius-2 btn--blue" id="enviarForm" type="submit">Submit</button>
                      </div>
                   </form>
                </div>
@@ -518,5 +531,40 @@
       <script src="{{asset('js/moment.min.js')}}"></script>
       <script src="{{asset('js/daterangepicker.js')}}"></script>
       <script src="{{asset('js/global.js')}}"></script>
+      <script src="{{asset('js/form.js')}}"></script>
+      <script src="{{asset('js/sweetalert2@11')}}"></script>
+      <script type="text/javascript">
+      
+      $(document).ready(function() {
+            $('#enrolarForm').on('submit', function(e) { 
+               e.preventDefault();  
+               var dataForm = $("#enrolarForm :input").serializeArray();
+               console.log(dataForm); 
+
+               url = $("#facebook").val();
+               var pattern = /^(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?$/;
+               if(pattern.test(url) || url =='') {
+                     $.ajax({
+                        url : "{{ path('enrolar_guardar') }}",
+                        type: "POST",
+                        data: dataForm,
+                        success : function (data) {
+                           console.log(data.status);
+                           console.log(data);
+                        },
+                        error: function () {
+                           Swal.fire('Ha ocurrido un error con tu registro, intenta más tarde')
+                        }
+                     });
+               }
+               else {
+                     Swal.fire('La url de facebook no es válida')
+               }
+            });
+
+
+
+         });
+      </script>
    </body>
 </html>
