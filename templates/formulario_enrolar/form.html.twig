@@ -545,7 +545,7 @@
                validacionPhone = true
                validacionUrl = true
                if(phone.length>4){
-                  validacionPhone = pattern.test(url) ? true:false;
+                  validacionPhone = regexNumero.test(phone) ? true:false;
                }
                if(url.length>0){
                   validacionUrl = pattern.test(url) ? true:false;
@@ -561,6 +561,7 @@
                            Swal.fire(data.message)
                            $('#enrolarForm').trigger("reset");
                            $('#birthday').val(today);
+                           $("#phone").val("+569")
                         },
                         error: function () {
                            Swal.fire('Ha ocurrido un error con tu registro, intenta más tarde')
