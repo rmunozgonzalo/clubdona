@@ -83,7 +83,7 @@ class EnrolarController extends AbstractController
     function enrolarCliente(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $valid = false;
+        $valid = true;
         $first_name = $request->request->get('first_name');
         $last_name = $request->request->get('last_name');
         $birthday = $request->request->get('birthday');
@@ -94,15 +94,23 @@ class EnrolarController extends AbstractController
 
         if ($valid) {
             
+            $cliente = new Cliente();
+            $cliente->setNombre($first_name);
+            $cliente->setApellidos($last_name);
+            $fecha = \DateTime::createFromFormat('Y-m-d',$birthday);
+            $cliente->setFechaNacimiento($fecha);
+            $cliente->setEmail($email);
+            $cliente->setTelefono($phone);
+            $cliente->setFacebook($facebook);
+            $cliente->setInstagram($instagram);
 
-            //$em->persist($entity->getCliente());
-            //$em->persist($entity);
+            $em->persist($cliente);
 
-            //$em->flush();
+            $em->flush();
 
             return new JsonResponse([
                 'status' => true,
-                'data' => $entity->toArray(),
+                'data' => $cliente->toArray(),
                 'message' => 'El registro fue exitoso.',
             ]);
         }

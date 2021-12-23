@@ -42,6 +42,8 @@ class ClienteCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            IntegerField::new('id')->hideOnForm(),
+            DateTimeField::new('fechaCreacion')->hideOnForm(),
             TextField::new('nombre'),
             TextField::new('apellidos'),
             TextField::new('rut'),

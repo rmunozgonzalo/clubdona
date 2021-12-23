@@ -458,13 +458,13 @@
                         <div class="col-2">
                            <div class="input-group">
                               <label class="label">Su nombre</label>
-                              <input class="input--style-4" type="text" name="first_name">
+                              <input class="input--style-4" type="text" name="first_name" required>
                            </div>
                         </div>
                         <div class="col-2">
                            <div class="input-group">
                               <label class="label">Su apellido</label>
-                              <input class="input--style-4" type="text" name="last_name">
+                              <input class="input--style-4" type="text" name="last_name" required>
                            </div>
                         </div>
                      </div>
@@ -473,7 +473,7 @@
                            <div class="input-group">
                               <label class="label">Cumpleaños</label>
                               <div class="input-group-icon">
-                                 <input class="input--style-4" type="date" name="birthday">
+                                 <input class="input--style-4" type="date" name="birthday" id="birthday">
                               </div>
                            </div>
                         </div>
@@ -482,13 +482,13 @@
                         <div class="col-2">
                            <div class="input-group">
                               <label class="label">Email</label>
-                              <input class="input--style-4" type="email" name="email">
+                              <input class="input--style-4" type="email" name="email" required>
                            </div>
                         </div>
                         <div class="col-2">
                            <div class="input-group">
                               <label class="label">Numero de Contacto</label>
-                              <input class="input--style-4" type="text" name="phone">
+                              <input class="input--style-4" type="text" name="phone" id="phone">
                            </div>
                         </div>
                      </div>
@@ -504,18 +504,6 @@
                               <label class="label">Instagram</label>
                               <input class="input--style-4" type="text" name="instagram">
                            </div>
-                        </div>
-                     </div>
-                     <div class="input-group">
-                        <label class="label">Subject</label>
-                        <div class="rs-select2 js-select-simple select--no-search">
-                           <select name="subject">
-                              <option disabled="disabled" selected="selected">Choose option</option>
-                              <option>Subject 1</option>
-                              <option>Subject 2</option>
-                              <option>Subject 3</option>
-                           </select>
-                           <div class="select-dropdown"></div>
                         </div>
                      </div>
                      <div class="p-t-15">
@@ -536,14 +524,33 @@
       <script type="text/javascript">
       
       $(document).ready(function() {
-            $('#enrolarForm').on('submit', function(e) { 
+         $("#phone").val("+569")
+         var now = new Date();
+
+         var day = ("0" + now.getDate()).slice(-2);
+         var month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+         var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+         $('#birthday').val(today);
+         console.log(today)
+         $('#enrolarForm').on('submit', function(e) { 
                e.preventDefault();  
                var dataForm = $("#enrolarForm :input").serializeArray();
                console.log(dataForm); 
 
                url = $("#facebook").val();
                var pattern = /^(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?$/;
-               if(pattern.test(url) || url =='') {
+               var regexNumero = /^(\+?56)?(\s?)(0?9)(\s?)[9876543]\d{7}$/g;
+               var phone = $("#phone").val()
+               validacionPhone = true
+               validacionUrl = true
+               if(phone.length>4){
+                  validacionPhone = pattern.test(url) ? true:false;
+               }
+               if(url.length>0){
+                  validacionUrl = pattern.test(url) ? true:false;
+               }
+               if(validacionUrl && validacionPhone) {
                      $.ajax({
                         url : "{{ path('enrolar_guardar') }}",
                         type: "POST",
@@ -551,6 +558,9 @@
                         success : function (data) {
                            console.log(data.status);
                            console.log(data);
+                           Swal.fire(data.message)
+                           $('#enrolarForm').trigger("reset");
+                           $('#birthday').val(today);
                         },
                         error: function () {
                            Swal.fire('Ha ocurrido un error con tu registro, intenta más tarde')
@@ -558,11 +568,17 @@
                      });
                }
                else {
-                     Swal.fire('La url de facebook no es válida')
+                     if(!validacionUrl)Swal.fire('La url de facebook no es válida')
+                     if(!validacionPhone)Swal.fire('El número no es válido')
                }
             });
-
-
+            
+            var regexNumero = /^(\+?56)?(\s?)(0?9)(\s?)[9876543]\d{7}$/g;
+            $("#phone").keyup(function(){
+               if($("#phone").val() == ""){
+                  $("#phone").val("+569")
+               }
+            });
 
          });
       </script>

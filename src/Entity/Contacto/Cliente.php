@@ -41,27 +41,27 @@ class Cliente
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $telefono;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $facebook;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,nullable=true)
      */
     private $twitter;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $instagram;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,nullable=true)
      */
     private $direccion;
 
@@ -74,7 +74,26 @@ class Cliente
     /**
      * @ORM\Column(type="bigint")
      */
-    private $puntos;
+    private $puntos=0;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="nacimiento", type="datetime", nullable=true)
+     */
+    private $fechaNacimiento = NULL;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="fecha_creacion", type="datetime", nullable=true)
+     */
+    private $fechaCreacion = NULL;
+
+    public function __construct()
+    {
+        $this->fechaCreacion =  new \Datetime('now');
+    }
 
     public function getId(): ?int
     {
@@ -213,8 +232,38 @@ class Cliente
         return $this;
     }
 
+    public function getFechaNacimiento(): ?\DateTimeInterface
+    {
+        return $this->fechaNacimiento;
+    }
+
+    public function setFechaNacimiento(?\DateTimeInterface $fechaNacimiento): self
+    {
+        $this->fechaNacimiento = $fechaNacimiento;
+
+        return $this;
+    }
+
     public function getNombreCompleto(): ?string
     {
         return $this->nombre.' '.$this->apellidos;
     }
+
+    public function toArray()
+    {
+        return [$this->nombre,$this->apellidos,$this->email];
+    }
+
+    public function getFechaCreacion(): ?\DateTimeInterface
+    {
+        return $this->fechaCreacion;
+    }
+
+    public function setFechaCreacion(?\DateTimeInterface $fechaCreacion): self
+    {
+        $this->fechaCreacion = $fechaCreacion;
+
+        return $this;
+    }
+
 }
