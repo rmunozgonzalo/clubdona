@@ -556,12 +556,17 @@
                         type: "POST",
                         data: dataForm,
                         success : function (data) {
-                           console.log(data.status);
-                           console.log(data);
-                           Swal.fire(data.message)
-                           $('#enrolarForm').trigger("reset");
-                           $('#birthday').val(today);
-                           $("#phone").val("+569")
+
+                           if(data.status){
+                              Swal.fire(data.message)
+                              $('#enrolarForm').trigger("reset");
+                              $('#birthday').val(today);
+                              $("#phone").val("+569")
+
+                           }
+                           else{
+                              Swal.fire(data.message)
+                           }
                         },
                         error: function () {
                            Swal.fire('Ha ocurrido un error con tu registro, intenta más tarde')

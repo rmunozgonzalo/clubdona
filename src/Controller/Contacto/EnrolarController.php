@@ -83,7 +83,7 @@ class EnrolarController extends AbstractController
     function enrolarCliente(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $valid = true;
+        $valid = false;
         $first_name = $request->request->get('first_name');
         $last_name = $request->request->get('last_name');
         $birthday = $request->request->get('birthday');
@@ -91,6 +91,22 @@ class EnrolarController extends AbstractController
         $phone = $request->request->get('phone');
         $facebook = $request->request->get('facebook');
         $instagram = $request->request->get('instagram');
+        $clienteExiste = null;
+        
+        if($email!=''){
+            $clienteExiste = $em->getRepository(Cliente::class)->findOneBy(['email'=>$email]);
+        }
+        
+        if($clienteExiste){
+            return new JsonResponse([
+                'status' => false,
+                'message' => 'Ya tenemos un registro con ese correo.',
+                'errors' => 'Correo registrado',
+            ]);
+        }
+        else{
+            $valid = true;
+        }
 
         if ($valid) {
             
